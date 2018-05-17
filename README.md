@@ -20,8 +20,8 @@ read the results file content to resume operations.
 The corollary is that this script state is reset by removing the
 corresponding file in the `results` folder.
 
-###### Zip results to xlsx
-`python3 `
+###### Zip results back to xlsx
+`python3 zip_result --filename="file_to_batch.xlsx"`
 
 
 ###### Limitations
