@@ -21,7 +21,7 @@ def zip_results(filename: str):
             if line % 100 == 0:
                 print("Zipped {0:.3f}%".format(line / (rows * 1.) * 100.))
             domain, segment, score = result.readline().split(",")
-            if not regex.search(sheet.cell(line, 6).value):
+            if not sheet.cell(line, 6).value or not regex.search(sheet.cell(line, 6).value):
                 continue  # skip invalid entries, like in bulk_score
             if domain not in sheet.cell(line, 6).value:
                 print("ERROR! Zipping on weird data (trying to zip {} with {})".format(sheet.cell(line, 6).value,
