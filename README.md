@@ -6,11 +6,11 @@ lines.
 ###### Installation
 
 - Make sure you have python3 installed (within a pyenv/venv is ideal)
-- `pip3 install -r requirements`
+- `pip3 install -r requirements.txt`
 
 ###### Run
 - `domain_column_idx` is the letter(s) corresponding to the column where the script should retrieve the domain information for each row
-`python3 bulk_score --filename="file_to_batch.xlsx" --domain_column_idx="AZ" --api="tenant_api_key"`
+`python3 bulk_score.py --filename="file_to_batch.xlsx" --score_type="email", --column_idx="A" --api="tenant_api_key"`
 
 ###### Error handling
 
