@@ -88,13 +88,10 @@ def run_xls(filename: str, api_key: str, score_type: str, column_idx: int):
         exit(0)
 
 def format_signals(signals: str): 
-    formatted_signals = ''
-    for signal in signals:
-        formatted_signals = formatted_signals  + " " + str(format_signal(signal))
-    return formatted_signals.strip()
+    return " ".join([format_signal(signal) for signal in signals])
 
 def format_signal(signal: str):
-    if signal == '':
+    if not signal:
         return ""
     else:
         if signal["type"] == "positive":
