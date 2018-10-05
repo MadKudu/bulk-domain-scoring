@@ -102,14 +102,13 @@ def format_signal(signal: str):
                 return str('↗ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"]), 'utf-8').replace('"', '')
             else:
                 return str('↗ ' + json.dumps(signal["name"]), 'utf-8').replace('"', '')
-        else:
-            if signal["type"] == "negative":
-                if signal["value"]:
-                    return str('✖ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"]), 'utf-8').replace('"', '')
-                else:
-                    return str('✖ ' + json.dumps(signal["name"]), 'utf-8').replace('"', '')
+        elif signal["type"] == "negative":
+            if signal["value"]:
+                return str('✖ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"]), 'utf-8').replace('"', '')
             else:
-                return ""
+                return str('✖ ' + json.dumps(signal["name"]), 'utf-8').replace('"', '')
+        else:
+            return ""
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Sends bulk persons to be scored.')
