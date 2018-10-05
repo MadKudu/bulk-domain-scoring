@@ -99,15 +99,15 @@ def format_signal(signal: str):
     else:
         if signal["type"] == "positive":
             if signal["value"]:
-                return str('↗ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"])).replace('"', '')
+                return str('↗ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"]), 'utf-8').replace('"', '')
             else:
-                return str('↗ ' + json.dumps(signal["name"])).replace('"', '')
+                return str('↗ ' + json.dumps(signal["name"]), 'utf-8').replace('"', '')
         else:
             if signal["type"] == "negative":
                 if signal["value"]:
-                    return str('✖ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"])).replace('"', '')
+                    return str('✖ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"]), 'utf-8').replace('"', '')
                 else:
-                    return str('✖ ' + json.dumps(signal["name"])).replace('"', '')
+                    return str('✖ ' + json.dumps(signal["name"]), 'utf-8').replace('"', '')
             else:
                 return ""
 
