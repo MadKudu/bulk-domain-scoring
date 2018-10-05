@@ -2,6 +2,7 @@ import argparse
 import logging
 import re
 import sys
+import json
 
 import requests
 from openpyxl import load_workbook
@@ -9,7 +10,7 @@ from openpyxl import load_workbook
 from utils import open_xls_as_xlsx
 
 API_DOMAIN_URL = "https://api.madkudu.com/v1/companies"
-API_PERSON_URL = "https://api.madkudu.com/v1/companies"
+API_PERSON_URL = "https://api.madkudu.com/v1/persons"
 
 logger = logging.getLogger('bulk_score')
 logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -32,6 +33,7 @@ def run_xls(filename: str, api_key: str, score_type: str, column_idx: int):
     regex = re.compile('(?:@)?(?P<tld>[\w\-]+\.\w+)')
 
     domains_scored = {}
+    emails_scored = {}
 
     print("File loaded. Results will be saved to results/{}.".format(result_filename))
     with open("results/" + result_filename, "a+") as result:
@@ -54,31 +56,58 @@ def run_xls(filename: str, api_key: str, score_type: str, column_idx: int):
                     continue
 
                 search = regex.search(person["email"])
+                print("scoring: " + person["email"])
                 if not search:
                     continue
 
-                domain = search.group('tld')
+                if score_type == 'domain':
+                    domain = search.group('tld')
 
-                if domain not in domains_scored:
-                    params = {"domain": domain}
+                    if domain not in domains_scored:
+                        params = {"domain": domain}
 
-                    resp = requests.get(API_DOMAIN_URL, auth=(api_key, ''), params=params)
+                        resp = requests.get(API_DOMAIN_URL, auth=(api_key, ''), params=params)
 
-                    domains_scored[domain] = resp.json()['properties']['customer_fit']
-                result.write(
-                    "{},{},{}\n".format(domain, domains_scored[domain]['segment'], domains_scored[domain]['score']))
+                        domains_scored[domain] = resp.json()['properties']['customer_fit']
+                    result.write(
+                        "{},{},{}\n".format(domain, domains_scored[domain]['segment'], domains_scored[domain]['score']'"' + format_signals(domains_scored[domain]['top_signals']) + '"'))
+                if score_type == 'email':
+                    email = person["email"]
+                    if email not in emails_scored:
+                        params = {"email": email}
+
+                        resp = requests.get(API_PERSON_URL, auth=(api_key, ''), params=params)
+
+                        emails_scored[email] = resp.json()['properties']['customer_fit']                        
+                    result.write(
+                        "{},{},{},{}\n".format(email, emails_scored[email]['segment'], emails_scored[email]['score'], '"' + format_signals(emails_scored[email]['top_signals']) + '"'))
         except Exception:
             result.flush()
             logger.exception("Exception met. Relaunch to resume!\n")
             exit(1)
         exit(0)
 
+def format_signals(signals: str): 
+    return " ".join([format_signal(signal) for signal in signals])
+
+def format_signal(signal: str):
+    if not signal:
+        return ""
+    elif signal["type"] == "positive":
+        if signal["value"]:
+            return str('↗ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"]), 'utf-8').replace('"', '')
+        return str('↗ ' + json.dumps(signal["name"]), 'utf-8').replace('"', '')
+    elif signal["type"] == "negative":
+        if signal["value"]:
+            return str('✖ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"]), 'utf-8').replace('"', '')
+        return str('✖ ' + json.dumps(signal["name"]), 'utf-8').replace('"', '')
+    return ""
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Sends bulk persons to be scored.')
     parser.add_argument("--filename", help="xlsx file containing all the persons to score", required=True)
     parser.add_argument("--api_key", help="api key", required=True)
-    parser.add_argument("--score_type", help="which score to use: either by domain or by personal email", required=True, choices=['domain', 'mail'])
-    parser.add_argument("--column_idx", help="domain/mail column idx (i.e: BQ)", required=True)
+    parser.add_argument("--score_type", help="which score to use: either by domain or by personal email", required=True, choices=['domain', 'email'])
+    parser.add_argument("--column_idx", help="domain/email column idx (i.e: BQ)", required=True)
 
     run_xls(**vars(parser.parse_args()))
