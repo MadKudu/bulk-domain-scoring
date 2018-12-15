@@ -30,5 +30,5 @@ corresponding file in the `results` folder.
 
 
 ###### Limitations
-This project was made for an Avalara file and does not currently support
+This project was made for a custom file and does not currently support
 alternative formats or column order. Feel free to improve! 
