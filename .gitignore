@@ -3,3 +3,4 @@ results/
 .idea
 *.xlsx
 *.xls
+.DS_Store
