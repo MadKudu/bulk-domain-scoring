@@ -1,8 +1,8 @@
 import argparse
+import json
 import logging
 import re
 import sys
-import json
 
 import requests
 from openpyxl import load_workbook
@@ -70,7 +70,7 @@ def run_xls(filename: str, api_key: str, score_type: str, column_idx: int):
 
                         domains_scored[domain] = resp.json()['properties']['customer_fit']
                     result.write(
-                        "{},{},{}\n".format(domain, domains_scored[domain]['segment'], domains_scored[domain]['score']'"' + format_signals(domains_scored[domain]['top_signals']) + '"'))
+                        "{},{},{}\n".format(domain, domains_scored[domain]['segment'], domains_scored[domain]['score'],'"' + format_signals(domains_scored[domain]['top_signals']) + '"'))
                 if score_type == 'email':
                     email = person["email"]
                     if email not in emails_scored:
