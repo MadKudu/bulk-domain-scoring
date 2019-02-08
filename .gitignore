@@ -1,4 +1,5 @@
 venv/
 results/
 .idea
-input/
+*.xlsx
+*.xls
