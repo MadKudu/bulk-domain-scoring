@@ -10,11 +10,11 @@ lines.
 
 ###### Run
 - `column_idx` is the letter(s) corresponding to the column where the script should retrieve the domain information for each row
-- `api` is the api key of the tenant
+- `api_key` is the api key of the tenant
 - `filename` the file from which to read from either xls or xlsx
 - `score_type` defines wich way to score the records, either email or domain
 - `column_idx` domain/mail column idx (i.e: BQ)
-`python3 bulk_score.py --filename="file_to_batch.xlsx" --score_type="email", --column_idx="A" --api="tenant_api_key"`
+`python3 bulk_score.py --filename="file_to_batch.xlsx" --score_type="email", --column_idx="A" --api_key="tenant_api_key"`
 
 ###### Error handling
 
