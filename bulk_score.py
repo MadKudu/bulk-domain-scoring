@@ -1,8 +1,8 @@
 import argparse
+import json
 import logging
 import re
 import sys
-import json
 
 import requests
 from openpyxl import load_workbook
@@ -67,20 +67,24 @@ def run_xls(filename: str, api_key: str, score_type: str, column_idx: int):
                         params = {"domain": domain}
 
                         resp = requests.get(API_DOMAIN_URL, auth=(api_key, ''), params=params)
-
                         domains_scored[domain] = resp.json()['properties']['customer_fit']
+
+                    customer_fit = domains_scored[domain]
                     result.write(
-                        "{},{},{}\n".format(domain, domains_scored[domain]['segment'], domains_scored[domain]['score']'"' + format_signals(domains_scored[domain]['top_signals']) + '"'))
+                        "{},{},{}\n".format(domain, customer_fit['segment'], customer_fit['score'],'"' + format_signals(customer_fit.get('top_signals', '')) + '"')
+                    )
                 if score_type == 'email':
                     email = person["email"]
                     if email not in emails_scored:
                         params = {"email": email}
 
                         resp = requests.get(API_PERSON_URL, auth=(api_key, ''), params=params)
-
-                        emails_scored[email] = resp.json()['properties']['customer_fit']                        
+                        customer_fit = resp.json()['properties']['customer_fit']
+                        emails_scored[email] = resp.json()['properties']['customer_fit']   
+                    customer_fit = emails_scored[email]                     
                     result.write(
-                        "{},{},{},{}\n".format(email, emails_scored[email]['segment'], emails_scored[email]['score'], '"' + format_signals(emails_scored[email]['top_signals']) + '"'))
+                        "{},{},{},{}\n".format(email, customer_fit['segment'], customer_fit['score'], '"' + format_signals(customer_fit.get('top_signals', '')) + '"')
+                    )        
         except Exception:
             result.flush()
             logger.exception("Exception met. Relaunch to resume!\n")
