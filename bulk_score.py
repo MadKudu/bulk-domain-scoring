@@ -61,17 +61,19 @@ def run_xls(filename: str, api_key: str, score_type: str, column_idx: int):
                     continue
 
                 if score_type == 'domain':
-                    domain = search.group('tld')
+                    domain = person["email"]
 
                     if domain not in domains_scored:
                         params = {"domain": domain}
 
                         resp = requests.get(API_DOMAIN_URL, auth=(api_key, ''), params=params)
+                        print(resp.json())
                         domains_scored[domain] = resp.json()['properties']['customer_fit']
 
                     customer_fit = domains_scored[domain]
                     result.write(
-                        "{},{},{}\n".format(domain, customer_fit['segment'], customer_fit['score'],'"' + format_signals(customer_fit.get('top_signals', '')) + '"')
+                        "{},{},{}\n".format(
+                            domain, customer_fit['segment'], customer_fit['score'], customer_fit['top_signals_formatted'])
                     )
                 if score_type == 'email':
                     email = person["email"]
@@ -83,29 +85,14 @@ def run_xls(filename: str, api_key: str, score_type: str, column_idx: int):
                         emails_scored[email] = resp.json()['properties']['customer_fit']   
                     customer_fit = emails_scored[email]                     
                     result.write(
-                        "{},{},{},{}\n".format(email, customer_fit['segment'], customer_fit['score'], '"' + format_signals(customer_fit.get('top_signals', '')) + '"')
+                        "{},{},{},{}\n".format(
+                            email, customer_fit['segment'], customer_fit['score'], customer_fit['top_signals_formatted'])
                     )        
         except Exception:
             result.flush()
             logger.exception("Exception met. Relaunch to resume!\n")
             exit(1)
         exit(0)
-
-def format_signals(signals: str): 
-    return " ".join([format_signal(signal) for signal in signals])
-
-def format_signal(signal: str):
-    if not signal:
-        return ""
-    elif signal["type"] == "positive":
-        if signal["value"]:
-            return str('↗ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"]), 'utf-8').replace('"', '')
-        return str('↗ ' + json.dumps(signal["name"]), 'utf-8').replace('"', '')
-    elif signal["type"] == "negative":
-        if signal["value"]:
-            return str('✖ ' + json.dumps(signal["name"]) + ' ' + json.dumps(signal["value"]), 'utf-8').replace('"', '')
-        return str('✖ ' + json.dumps(signal["name"]), 'utf-8').replace('"', '')
-    return ""
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Sends bulk persons to be scored.')
