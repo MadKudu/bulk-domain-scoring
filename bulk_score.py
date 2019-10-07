@@ -72,7 +72,7 @@ def run_xls(filename: str, api_key: str, score_type: str, column_idx: int):
                         domains_scored[domain] = customer_fit_result
 
                     customer_fit = domains_scored[domain]
-                    new_row = "{},{},{},{}\n".format(domain, customer_fit['segment'], customer_fit['score'], customer_fit['top_signals_formatted'])
+                    new_row = "{},{},{},\"{}\"\n".format(domain, customer_fit['segment'], customer_fit['score'], customer_fit['top_signals_formatted'])
                     print(new_row)
                     result.write(new_row)
 
@@ -101,7 +101,7 @@ def run_xls(filename: str, api_key: str, score_type: str, column_idx: int):
                         emails_scored[email] = customer_fit_result
 
                     customer_fit = emails_scored[email]      
-                    new_row = "{},{},{},{}\n".format(domain, customer_fit['segment'], customer_fit['score'], customer_fit['top_signals_formatted'])
+                    new_row = "{},{},{},\"{}\"\n".format(domain, customer_fit['segment'], customer_fit['score'], customer_fit['top_signals_formatted'])
                     print(new_row)
                     result.write(new_row)        
         except Exception:
