@@ -4,3 +4,4 @@ results/
 *.xlsx
 *.xls
 .DS_Store
+__pycache__/
