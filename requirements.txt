@@ -1,3 +1,4 @@
-requests
+aiohttp
+asyncio-throttle
 Openpyxl
 xlrd
