@@ -29,7 +29,7 @@ async def get(mode, api_key, param):
             login=api_key,
             password=''
         )
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             async with throttler:
                 async with session.get(url=url, auth=auth, params=params) as response:
                     return await response.json()
